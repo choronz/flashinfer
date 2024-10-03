@@ -18,21 +18,21 @@ on:
       #   required: true
 
 env:
-  TORCH_CUDA_ARCH_LIST: "7.5 8.0 8.9 9.0+PTX"
+  TORCH_CUDA_ARCH_LIST: "8.9+PTX"
 
 jobs:
   build:
     strategy:
       fail-fast: false
       matrix:
-        python: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-        cuda: ["11.8", "12.1", "12.4"]
-        torch: ["2.2", "2.3", "2.4"]
-        exclude: # for cuda 12.4, we only support torch 2.4+
-          - cuda: "12.4"
-            torch: "2.2"
-          - cuda: "12.4"
-            torch: "2.3"
+        python: ["3.11", "3.12"]
+        cuda: ["12.4"]
+        torch: ["2.4"]
+        # exclude: # for cuda 12.4, we only support torch 2.4+
+        #   - cuda: "12.4"
+        #     torch: "2.2"
+        #   - cuda: "12.4"
+        #     torch: "2.3"
 
     runs-on: [self-hosted]
     steps:
@@ -80,24 +80,6 @@ jobs:
         with:
           tag_name: ${{ inputs.tag_name }}
           files: |
-            python/dist/flashinfer*cp38*.whl
-
-      - uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.tag_name }}
-          files: |
-            python/dist/flashinfer*cp39*.whl
-
-      - uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.tag_name }}
-          files: |
-            python/dist/flashinfer*cp310*.whl
-
-      - uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.tag_name }}
-          files: |
             python/dist/flashinfer*cp311*.whl
 
       - uses: softprops/action-gh-release@v1
@@ -105,12 +87,7 @@ jobs:
           tag_name: ${{ inputs.tag_name }}
           files: |
             python/dist/flashinfer*cp312*.whl
-
-      - uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ inputs.tag_name }}
-          files: |
-            python/dist/flashinfer-*.tar.gz
+        # python/dist/flashinfer-*.tar.gz
 
       - name: Clone wheel index
         run: git clone https://oauth2:${WHL_TOKEN}@github.com/flashinfer-ai/whl.git flashinfer-whl
@@ -129,9 +106,3 @@ jobs:
           git commit -m "update whl"
           git push
 
-      # - name: Upload sdist to pypi
-      #   run: |
-      #     pip install twine
-      #     python -m twine upload --repository testpypi --username=__token__ dist/*.tar.gz
-      #   env:
-      #     TWINE_PASSWORD: ${{ secrets.PYPI_TEST_TOKEN }}
