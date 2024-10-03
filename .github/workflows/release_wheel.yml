@@ -11,11 +11,6 @@ on:
       tag_name:
         required: true
         type: string
-    secrets:
-      WHL_TOKEN:
-        required: true
-      # PYPI_TEST_TOKEN:
-      #   required: true
 
 env:
   TORCH_CUDA_ARCH_LIST: "8.9+PTX"
@@ -28,11 +23,6 @@ jobs:
         python: ["3.11", "3.12"]
         cuda: ["12.4"]
         torch: ["2.4"]
-        # exclude: # for cuda 12.4, we only support torch 2.4+
-        #   - cuda: "12.4"
-        #     torch: "2.2"
-        #   - cuda: "12.4"
-        #     torch: "2.3"
 
     runs-on: [self-hosted]
     steps:
@@ -88,6 +78,4 @@ jobs:
           files: |
             python/dist/flashinfer*cp312*.whl
         # python/dist/flashinfer-*.tar.gz
-
-          git push
 
